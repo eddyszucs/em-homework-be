@@ -1,0 +1,11 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/*.user
+**/*.suo
+**/.idea/
+**/node_modules/
+**/*.log
+**/appsettings.*.json
+!.dockerignore

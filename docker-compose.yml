@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: clinic-db
+    environment:
+      POSTGRES_DB: clinicdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: localdev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./ClinicBackend
+      dockerfile: Dockerfile
+    container_name: clinic-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=clinicdb;Username=postgres;Password=localdev
+      - Jwt__Key=dev-secret-key-minimum-32-characters-long-for-hs256
+      - Jwt__Issuer=ClinicBackend
+      - Jwt__Audience=ClinicDesktop
+      - Jwt__ExpiryMinutes=60
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
