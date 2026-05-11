@@ -67,7 +67,7 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           slot-name: production
-          package: ./publish
+          package: ./publish/publish.zip
 
       - name: Set environment variables in Azure
         run: |
