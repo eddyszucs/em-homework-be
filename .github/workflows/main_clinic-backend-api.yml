@@ -46,7 +46,7 @@ jobs:
       - name: Package for deployment
         run: |
           cd ClinicBackend && dotnet publish -p:PublishProtocol=Zip --no-build
-          mv publish.zip ../publish.zip
+          mv ClinicBackend/bin/Release/net8.0/publish.zip ./publish.zip
         working-directory: ./
 
       - name: Login to Azure
