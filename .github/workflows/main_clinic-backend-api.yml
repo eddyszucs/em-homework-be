@@ -29,12 +29,16 @@ jobs:
         run: dotnet restore ClinicBackend/ClinicBackend.csproj
         working-directory: ./
 
-      - name: Build
-        run: dotnet build ClinicBackend/ClinicBackend.csproj ClinicBackend.Tests/ClinicBackend.Tests.csproj --configuration Release --no-restore
+      - name: Build main project
+        run: dotnet build ClinicBackend/ClinicBackend.csproj --configuration Release --no-restore
+        working-directory: ./
+
+      - name: Build test project
+        run: dotnet build ClinicBackend.Tests/ClinicBackend.Tests.csproj --configuration Release --no-restore
         working-directory: ./
 
       - name: Test
-        run: dotnet test ClinicBackend.Tests/ClinicBackend.Tests.csproj --configuration Release
+        run: dotnet test ClinicBackend.Tests/ClinicBackend.Tests.csproj --configuration Release --no-build
         working-directory: ./
 
       - name: Publish
