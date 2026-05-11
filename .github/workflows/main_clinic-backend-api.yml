@@ -43,13 +43,10 @@ jobs:
         run: dotnet test ClinicBackend.Tests/ClinicBackend.Tests.csproj --configuration Release --no-build
         working-directory: ./
 
-      - name: Publish
-        run: dotnet publish ClinicBackend/ClinicBackend.csproj --configuration Release --output ./ClinicBackend/publish --no-build
-        working-directory: ./
-
       - name: Package for deployment
         run: |
-          powershell -Command "Compress-Archive -Path ./ClinicBackend/publish/* -DestinationPath ./ClinicBackend/publish.zip -Force"
+          cd ClinicBackend && dotnet publish -p:PublishProtocol=Zip --no-build
+          mv publish.zip ../publish.zip
         working-directory: ./
 
       - name: Login to Azure
@@ -59,9 +56,12 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FD8AB91AF8E64D638255BB2647F11267 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E10AAC68CFA144A4B8DD0DC220F53EEB }}
 
-      - name: Deploy app via Azure CLI
-        run: |
-          az webapp deploy --resource-group clinic-backend-rg --name ${{ env.AZURE_WEBAPP_NAME }} --src-url ./ClinicBackend/publish.zip --type zip
+      - name: Deploy app via Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          slot-name: production
+          package: ./ClinicBackend/publish.zip
 
       - name: Set environment variables in Azure
         run: |
