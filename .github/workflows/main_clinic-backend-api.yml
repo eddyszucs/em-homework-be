@@ -48,11 +48,8 @@ jobs:
 
       - name: Package for deployment
         run: |
-          dotnet publish ClinicBackend/ClinicBackend.csproj \
-            -c Release \
-            -p:PublishProtocol=Zip \
-            -p:PublishDir=./publish \
-            --no-build
+          dotnet publish ClinicBackend/ClinicBackend.csproj -c Release -p:PublishDir=./publish --no-build
+          cd ./publish && zip -r ../publish.zip .
         working-directory: ./
 
       - name: Login to Azure
