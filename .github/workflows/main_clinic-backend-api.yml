@@ -9,7 +9,7 @@ on:
 env:
   DOTNET_VERSION: '8.0.x'
   AZURE_WEBAPP_NAME: clinic-backend-api   # ← Change to your actual app name
-  AZURE_WEBAPP_PACKAGE_PATH: ./ClinicBackend/publish
+  AZURE_WEBAPP_PACKAGE_PATH: ./publish
 
 jobs:
   build-and-deploy:
@@ -45,8 +45,11 @@ jobs:
 
       - name: Package for deployment
         run: |
-          cd ClinicBackend && dotnet publish -p:PublishProtocol=Zip --no-build
-          mv ClinicBackend/bin/Release/net8.0/publish.zip ./publish.zip
+          dotnet publish ClinicBackend/ClinicBackend.csproj \
+            -c Release \
+            -p:PublishProtocol=Zip \
+            -p:PublishDir=./publish \
+            --no-build
         working-directory: ./
 
       - name: Login to Azure
@@ -61,7 +64,7 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           slot-name: production
-          package: ./ClinicBackend/publish.zip
+          package: ./publish
 
       - name: Set environment variables in Azure
         run: |
