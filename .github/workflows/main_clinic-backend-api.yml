@@ -26,7 +26,9 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore ClinicBackend/ClinicBackend.csproj ClinicBackend.Tests/ClinicBackend.Tests.csproj
+        run: |
+          dotnet restore ClinicBackend/ClinicBackend.csproj
+          dotnet restore ClinicBackend.Tests/ClinicBackend.Tests.csproj
         working-directory: ./
 
       - name: Build main project
