@@ -30,11 +30,11 @@ jobs:
         working-directory: ./
 
       - name: Build
-        run: dotnet build ClinicBackend/ClinicBackend.csproj --configuration Release --no-restore
+        run: dotnet build ClinicBackend/ClinicBackend.csproj ClinicBackend.Tests/ClinicBackend.Tests.csproj --configuration Release --no-restore
         working-directory: ./
 
       - name: Test
-        run: dotnet test ClinicBackend.Tests/ClinicBackend.Tests.csproj --configuration Release --no-build
+        run: dotnet test ClinicBackend.Tests/ClinicBackend.Tests.csproj --configuration Release
         working-directory: ./
 
       - name: Publish
