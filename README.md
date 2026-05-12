@@ -143,10 +143,9 @@ Every create/update/delete on patients and diagnoses is recorded with user ID, t
 ## If We Had More Time
 
 - **Repository pattern** — abstract `DbContext` behind `IRepository<T>` for cleaner unit testability and potential polyglot persistence
-- **Role-based policy objects** — replace string-literal `[Authorize(Roles = "...")]` with typed `Policies.CanAssignPatient` policies
 - **Refresh token rotation** — store refresh tokens in the DB with family tracking to detect token reuse attacks
 - **API versioning** — `/api/v1/...` URL versioning to safely evolve the contract without breaking clients
 - **Paginated list endpoints** — replace `List<T>` returns with cursor-based pagination to handle large patient sets efficiently
 - **Polished SignalR** — typed strongly-typed hub events, graceful client reconnect, and a demo UI to visualise notifications
-- **Comprehensive property-level authorisation** — `GetAllAsync` currently returns all non-deleted patients to any authenticated Assistant; should filter by which doctors the assistant is permitted to see
+- **Admin role and dashboard** — An admin panel for managing users (creating assistants/doctors) and viewing audit logs.
 - **Integration test database per test** — `CustomWebApplicationFactory` currently shares a database per test class fixture; parallelised test runs could benefit from a fresh in-memory DB per test method
