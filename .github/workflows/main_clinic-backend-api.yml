@@ -39,7 +39,7 @@ jobs:
         working-directory: ./
 
       - name: Build test project
-        run: dotnet build ClinicBackend.Tests/ClinicBackend.Tests.csproj --configuration Release --no-restore
+        run: dotnet build ClinicBackend.Tests/ClinicBackend.Tests.csproj --configuration Release
         working-directory: ./
 
       - name: Test
