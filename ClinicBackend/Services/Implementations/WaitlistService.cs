@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ClinicBackend.Data;
 using ClinicBackend.Models.DTOs;
 using ClinicBackend.Models.Enums;
-using ClinicBackend.Models;
+using ClinicBackend.Models.StateMachine;
 using ClinicBackend.Services.Interfaces;
 
 namespace ClinicBackend.Services;
@@ -44,8 +44,7 @@ public class WaitlistService : IWaitlistService
             ?? throw new KeyNotFoundException("Doctor not found");
 
         patient.AssignedDoctorId = doctorId;
-        PatientStateMachine.Transition(patient, PatientStatus.Waiting);
-        patient.UpdatedAt = DateTime.UtcNow;
+        PatientStateMachine.AssignDoctor(patient, doctorId);
         await _db.SaveChangesAsync();
 
         await _auditService.LogAsync(assistantId, patient.Id, "PATIENT_ASSIGNED",
@@ -66,7 +65,7 @@ public class WaitlistService : IWaitlistService
         if (patient.AssignedDoctorId != doctorId)
             throw new ForbiddenException("Only the assigned doctor can call this patient.");
 
-        PatientStateMachine.Transition(patient, PatientStatus.InProgress);
+        PatientStateMachine.Call(patient, doctorId);
         await _db.SaveChangesAsync();
 
         await _auditService.LogAsync(doctorId, patient.Id, "PATIENT_CALLED",
@@ -84,7 +83,7 @@ public class WaitlistService : IWaitlistService
         if (patient.AssignedDoctorId != doctorId)
             throw new ForbiddenException("Only the assigned doctor can release this patient.");
 
-        PatientStateMachine.Transition(patient, PatientStatus.Done);
+        PatientStateMachine.Release(patient, doctorId);
         await _db.SaveChangesAsync();
 
         await _auditService.LogAsync(doctorId, patient.Id, "PATIENT_RELEASED",
@@ -93,14 +92,4 @@ public class WaitlistService : IWaitlistService
 
         return new StateTransitionResult(patient.Id, patient.Status.ToString()!);
     }
-}
-
-public class ForbiddenException : Exception
-{
-    public ForbiddenException(string message) : base(message) { }
-}
-
-public class InvalidStateTransitionException : Exception
-{
-    public InvalidStateTransitionException(string message) : base(message) { }
 }

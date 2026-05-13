@@ -44,6 +44,7 @@ public class ClinicDbContext : DbContext
                   .OnDelete(DeleteBehavior.SetNull);
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.HasQueryFilter(p => !p.IsDeleted);
+            entity.Ignore(e => e.State);
         });
 
         modelBuilder.Entity<Diagnosis>(entity =>

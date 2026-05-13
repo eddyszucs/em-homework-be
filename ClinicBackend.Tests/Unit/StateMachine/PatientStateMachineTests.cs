@@ -1,4 +1,4 @@
-using ClinicBackend.Models;
+using ClinicBackend.Models.StateMachine;
 using ClinicBackend.Models.Enums;
 using ClinicBackend.Models.Entities;
 using Xunit;
